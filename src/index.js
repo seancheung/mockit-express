@@ -2,7 +2,7 @@ const { Router } = require('express');
 const Database = require('./db');
 const mount = require('./mount');
 
-function createRouter(db, filename) {
+function createRouter(db, filename, callback) {
     if (filename === null) {
         db.drop();
     } else if (typeof filename === 'string') {
@@ -15,7 +15,7 @@ function createRouter(db, filename) {
     }
     const router = Router({ mergeParams: true });
     for (const doc of db.all()) {
-        mount(router, doc);
+        mount(router, doc, callback);
     }
 
     return router;
@@ -33,10 +33,10 @@ function watchFile(filename, callback) {
         .on('error', err => callback(err));
 }
 
-function mockit(filename, watchCallback) {
+function mockit(filename, watchCallback, mountCallback) {
     const db = new Database();
     const router = Router({ mergeParams: true });
-    let subRouter = createRouter(db, filename);
+    let subRouter = createRouter(db, filename, mountCallback);
     router.use((req, res, next) => {
         if (subRouter) {
             subRouter(req, res, next);

@@ -2,8 +2,10 @@ import { Router } from 'express';
 
 declare function mockit(
     file: string | mockit.Routes,
-    watch?: mockit.Watcher
+    watcher?: mockit.Watcher,
+    mounted?: mockit.MountCallback
 ): Router;
+
 declare namespace mockit {
     interface BaseRoute {
         code?: number;
@@ -32,6 +34,13 @@ declare namespace mockit {
     export interface Condition extends BaseRoute {
         case: string;
     }
+    interface MountedRoute {
+        readonly method: string;
+        readonly path: string;
+        readonly proxy?: true;
+        readonly bypass?: true;
+    }
+    type MountCallback = (route: MountedRoute) => void;
     type Watcher = (error?: Error, changed?: boolean) => void;
 }
 

@@ -19,6 +19,8 @@ npm i js-yaml
 npm i faker
 # to enable proxy support
 npm i express-request-proxy
+# to enable file watching and auto-reload support
+npm i chokidar
 ```
 
 ## Usage
