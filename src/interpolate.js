@@ -1,5 +1,4 @@
 const vm = require('vm');
-const faker = require('faker');
 
 function unescape(exp) {
     return exp.replace(/\\(.)/g, (_, c) => c);
@@ -13,7 +12,7 @@ function interpolate(src, req) {
     return src.replace(/\$\{((?:[^{}\\]|\\.)+)\}/g, (_, exp) => {
         exp = unescape(exp);
         let value = vm.runInNewContext(exp, {
-            faker,
+            faker: require('faker'),
             $faker: locale => require(`faker/locale/${locale}`),
             params: req.params,
             query: req.query,

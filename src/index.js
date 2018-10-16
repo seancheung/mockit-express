@@ -50,8 +50,14 @@ function mockit(filename, watchCallback) {
             if (err) {
                 watchCallback(err);
             } else {
+                try {
+                    subRouter = createRouter(db, filename);
+                } catch (error) {
+                    watchCallback(null, filename != null);
+
+                    return;
+                }
                 watchCallback(null, filename != null);
-                subRouter = createRouter(db, filename);
             }
         });
     }
