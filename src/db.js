@@ -2,7 +2,9 @@ const crypto = require('crypto');
 const { EventEmitter } = require('events');
 const SYMBOLS = {
     db: Symbol(),
-    stream: Symbol()
+    stream: Symbol(),
+    hook: Symbol(),
+    changed: Symbol()
 };
 
 function clone(source) {
@@ -119,9 +121,7 @@ module.exports = class Database extends EventEmitter {
         const id = hash(method, path);
         doc = clone(doc);
         this[SYMBOLS.db].set(id, doc);
-        if (this[SYMBOLS.stream]) {
-            this.ydump(this[SYMBOLS.stream]);
-        }
+        this[SYMBOLS.changed]();
 
         return Object.assign({ id }, clone(doc));
     }
@@ -141,9 +141,7 @@ module.exports = class Database extends EventEmitter {
         delete data.method;
         delete data.path;
         Object.assign(doc, data);
-        if (this[SYMBOLS.stream]) {
-            this.ydump(this[SYMBOLS.stream]);
-        }
+        this[SYMBOLS.changed]();
 
         return Object.assign({ id }, clone(doc));
     }
@@ -155,12 +153,12 @@ module.exports = class Database extends EventEmitter {
      * @returns {boolean}
      */
     remove(id) {
-        const sucess = this[SYMBOLS.db].delete(id);
-        if (this[SYMBOLS.stream]) {
-            this.ydump(this[SYMBOLS.stream]);
+        const success = this[SYMBOLS.db].delete(id);
+        if (success) {
+            this[SYMBOLS.changed]();
         }
 
-        return sucess;
+        return success;
     }
 
     /**
@@ -168,9 +166,7 @@ module.exports = class Database extends EventEmitter {
      */
     drop() {
         this[SYMBOLS.db].clear();
-        if (this[SYMBOLS.stream]) {
-            this.ydump(this[SYMBOLS.stream]);
-        }
+        this[SYMBOLS.changed]();
     }
 
     /**
@@ -256,9 +252,20 @@ module.exports = class Database extends EventEmitter {
         }
         this[SYMBOLS.db].clear();
         docs.forEach((doc, i) => this[SYMBOLS.db].set(ids[i], doc));
+        this[SYMBOLS.changed]();
+    }
+
+    [SYMBOLS.changed]() {
+        if (this[SYMBOLS.hook]) {
+            this[SYMBOLS.hook].call(null, this);
+        }
         if (this[SYMBOLS.stream]) {
             this.ydump(this[SYMBOLS.stream]);
         }
+    }
+
+    hook(callback) {
+        this[SYMBOLS.hook] = callback;
     }
 
     persist(stream) {

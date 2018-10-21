@@ -1,10 +1,10 @@
 /*eslint no-unused-vars: off*/
-const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mockit = require('../src');
+const source = require('./source');
 
-const router = mockit(path.resolve(__dirname, 'routes.yml'));
+const router = mockit(source);
 
 const app = express();
 app.set('trust proxy', true);

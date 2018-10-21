@@ -2,17 +2,7 @@ const { Router } = require('express');
 const Database = require('./db');
 const mount = require('./mount');
 
-function createRouter(db, filename, callback) {
-    if (filename === null) {
-        db.drop();
-    } else if (typeof filename === 'string') {
-        const routes = require('./load')(filename);
-        db.load(routes);
-    } else if (typeof filename === 'object') {
-        db.load(filename);
-    } else {
-        throw new Error('invalid route config');
-    }
+function create(db, callback) {
     const router = Router({ mergeParams: true });
     for (const doc of db.all()) {
         mount(router, doc, callback);
@@ -34,9 +24,23 @@ function watchFile(filename, callback) {
 }
 
 function mockit(filename, watchCallback, mountCallback) {
-    const db = new Database();
+    let db;
+    if (typeof filename === 'string') {
+        db = new Database();
+    } else {
+        mountCallback = watchCallback;
+        watchCallback = null;
+        if (filename instanceof Database) {
+            // db
+            db = filename;
+        } else if (typeof filename === 'object') {
+            db = new Database();
+        } else {
+            throw new Error('invalid file type');
+        }
+    }
     const router = Router({ mergeParams: true });
-    let subRouter = createRouter(db, filename, mountCallback);
+    let subRouter;
     router.use((req, res, next) => {
         if (subRouter) {
             subRouter(req, res, next);
@@ -45,13 +49,21 @@ function mockit(filename, watchCallback, mountCallback) {
         }
     });
 
+    db.hook(db => {
+        subRouter = create(db, mountCallback);
+    });
+
     if (typeof watchCallback === 'function') {
         watchFile(filename, (err, filename) => {
             if (err) {
                 watchCallback(err);
             } else {
                 try {
-                    subRouter = createRouter(db, filename);
+                    if (filename) {
+                        db.load(require('./load')(filename));
+                    } else {
+                        db.drop();
+                    }
                 } catch (error) {
                     watchCallback(null, filename != null);
 
@@ -62,9 +74,18 @@ function mockit(filename, watchCallback, mountCallback) {
         });
     }
 
+    if (typeof filename === 'string') {
+        db.load(require('./load')(filename));
+    } else if (filename instanceof Database) {
+        subRouter = create(filename, mountCallback);
+    } else {
+        db.load(filename);
+    }
+
     return router;
 }
 
+mockit.Database = Database;
 mockit.default = mockit;
 
 module.exports = mockit;

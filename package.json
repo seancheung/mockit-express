@@ -1,6 +1,6 @@
 {
   "name": "mockit-express",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Http API mock router for express application",
   "main": "src/index.js",
   "types": "index.d.ts",
@@ -36,6 +36,7 @@
     "faker": "^4.1.0",
     "js-yaml": "^3.12.0",
     "mocha": "^5.2.0",
+    "mock-require": "^3.0.2",
     "supertest": "^3.3.0"
   }
 }

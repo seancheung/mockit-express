@@ -1,5 +1,4 @@
-mockit-express
----
+## mockit-express
 
 [![Master Build][travis-master]][travis-url]
 
@@ -7,7 +6,6 @@ Http API mock router for express application
 
 [travis-master]: https://img.shields.io/travis/seancheung/mockit-express/master.svg?label=master
 [travis-url]: https://travis-ci.org/seancheung/mockit-express
-
 
 ## Install
 
@@ -26,23 +24,37 @@ npm i chokidar
 ## Usage
 
 ```javascript
-const mockit = require('mockit-express');
-const router = mockit('/path/routes/config/file');
-app.use('/api/v1', router);
+const mockit = require("mockit-express");
+const router = mockit("/path/routes/config/file");
+app.use("/api/v1", router);
 ```
 
 Watch config file change and reload automatically
 
 ```javascript
-const router = mockit('/path/routes/config/file', (err, changed) => {
-    if(err) {
-        console.error('failed to load config file', err);
-    } else if(changed) {
-        console.log('file changed');
-    } else {
-        console.warn('file removed');
-    }
+const router = mockit("/path/routes/config/file", (err, changed) => {
+  if (err) {
+    console.error("failed to load config file", err);
+  } else if (changed) {
+    console.log("file changed");
+  } else {
+    console.warn("file removed");
+  }
 });
+```
+
+Pass routes directly
+
+```javascript
+const router = mockit({ "GET /api/v1/account": { code: 200 } });
+```
+
+Use db instance
+
+```javascript
+const db = new mockit.Database();
+db.load("/path/routes/config/file");
+const router = mockit(db);
 ```
 
 ## Config
@@ -238,18 +250,17 @@ Expressions encaptured by `${` and `}` in `body` field will be interpolated.
 
 `"${'\{using curly braces inside interpolation\}'}"` => `"{using curly braces inside interpolation}"`
 
-
 **Accessing `params`, `query`, `body` and `headers`**
 
 > `params` keeps the passed-in parameters in route url, `query` stores request query string values, `body` and `headers` hold request body and headers respectively
 
-*Definition: /api/v1/items/:id*
+_Definition: /api/v1/items/:id_
 
-*Request URL: /api/v1/items/12?color=red*
+_Request URL: /api/v1/items/12?color=red_
 
-*Request Headers: {'x-version':'1.31'}*
+_Request Headers: {'x-version':'1.31'}_
 
-*Request body: '{"count": 9}'*
+_Request body: '{"count": 9}'_
 
 `${params.id}` => `12`
 
@@ -278,7 +289,6 @@ Expressions encaptured by `${` and `}` in `body` field will be interpolated.
 `"${$faker('zh_CN').name.firstName}"` => `"朱"`
 
 > see **[faker](http://marak.github.io/faker.js)** for reference
-
 
 ## Test
 
