@@ -1,6 +1,5 @@
-const fs = require('fs');
-
 module.exports = function(filename) {
+    const fs = require('fs');
     let routes;
     if (/\.json$/i.test(filename)) {
         routes = JSON.parse(fs.readFileSync(filename, 'utf8'));

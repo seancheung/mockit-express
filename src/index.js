@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const Database = require('./db');
 const mount = require('./mount');
+const load = require('./load');
 
 function create(db, callback) {
     const router = Router({ mergeParams: true });
@@ -60,7 +61,7 @@ function mockit(filename, watchCallback, mountCallback) {
             } else {
                 try {
                     if (filename) {
-                        db.load(require('./load')(filename));
+                        db.load(load(filename));
                     } else {
                         db.drop();
                     }
@@ -86,6 +87,8 @@ function mockit(filename, watchCallback, mountCallback) {
 }
 
 mockit.Database = Database;
+mockit.load = load;
+mockit.mount = mount;
 mockit.default = mockit;
 
 module.exports = mockit;

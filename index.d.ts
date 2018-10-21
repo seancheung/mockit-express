@@ -33,6 +33,14 @@ declare namespace mockit {
     interface Condition extends BaseRoute {
         case: string;
     }
+    interface MountedRoute {
+        readonly method: string;
+        readonly path: string;
+        readonly proxy?: true;
+        readonly bypass?: true;
+    }
+    type MountCallback = (route: MountedRoute) => void;
+    type Watcher = (error?: Error, changed?: boolean) => void;
     export interface PlainRoute extends BaseRoute {
         cond?: Condition[];
     }
@@ -135,14 +143,20 @@ declare namespace mockit {
          */
         hook(cb?: (db: Database) => void): void
     }
-    interface MountedRoute {
-        readonly method: string;
-        readonly path: string;
-        readonly proxy?: true;
-        readonly bypass?: true;
-    }
-    type MountCallback = (route: MountedRoute) => void;
-    type Watcher = (error?: Error, changed?: boolean) => void;
+    /**
+     * Load routes file
+     * 
+     * @param filename Filename(json/yaml)
+     */
+    export function load(filename: string): Routes
+    /**
+     * Mount route to router
+     * 
+     * @param router Router
+     * @param route Route
+     * @param callback Mounted callback
+     */
+    export function mount(router: Router, route: Route, callback?: MountCallback): void
 }
 
 export = mockit;

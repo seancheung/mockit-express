@@ -1,5 +1,3 @@
-const vm = require('vm');
-
 function unescape(exp) {
     return exp.replace(/\\(.)/g, (_, c) => c);
 }
@@ -11,7 +9,7 @@ function interpolate(src, req) {
 
     return src.replace(/\$\{((?:[^{}\\]|\\.)+)\}/g, (_, exp) => {
         exp = unescape(exp);
-        let value = vm.runInNewContext(exp, {
+        let value = require('vm').runInNewContext(exp, {
             faker: require('faker'),
             $faker: locale => require(`faker/locale/${locale}`),
             params: req.params,
@@ -50,7 +48,7 @@ module.exports = route => (req, res, next) => {
     }
     if (cond) {
         for (const item of cond) {
-            const success = vm.runInNewContext(item.case, {
+            const success = require('vm').runInNewContext(item.case, {
                 params: req.params,
                 query: req.query,
                 body: req.body,

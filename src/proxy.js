@@ -1,5 +1,3 @@
-const request = require('express-request-proxy');
-
 const vars = {
     remote_addr: req => req.ip,
     host: (_, proxy) => proxy.remote.replace(/^https?:\/{2}/, ''),
@@ -50,7 +48,7 @@ module.exports = route => (req, res, next) => {
     } else {
         headers = {};
     }
-    request({
+    require('express-request-proxy')({
         url,
         params: req.params,
         query: req.query,
