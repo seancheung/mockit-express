@@ -296,6 +296,26 @@ _Request body: '{"count": 9}'_
 npm test
 ```
 
+## Integrate into Webpack
+
+```javascript
+const mockit = require("mockit-express");
+//...
+module.exports = {
+  //...
+  devServer: {
+    after: function(app) {
+      app.use(mockit("/path/routes/file"));
+    }
+  }
+};
+```
+
+## Standalone
+
+See [mockit](https://github.com/seancheung/mockit)
+
+
 ## License
 
 See [License](https://github.com/seancheung/mockit-express/blob/master/LICENSE)
