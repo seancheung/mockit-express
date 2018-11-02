@@ -172,7 +172,7 @@ module.exports = class Database extends EventEmitter {
     /**
      * Dump all records to a writable stream in json format
      *
-     * @param {WritableStream} stream
+     * @param {WriteStream} stream
      * @returns {Promise<void>}
      */
     dump(stream) {
@@ -203,7 +203,7 @@ module.exports = class Database extends EventEmitter {
     /**
      * Dump all records to a writable stream in yaml format
      *
-     * @param {WritableStream} stream
+     * @param {WriteStream} stream
      * @returns {Promise<void>}
      */
     ydump(stream) {
