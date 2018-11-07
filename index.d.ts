@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { WriteStream } from 'fs';
+import { Omit, RouteKey, RouteName } from './types';
 
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 interface Headers {
     [x: string]: string;
 }
@@ -39,8 +39,6 @@ interface Proxy {
 interface ProxyData {
     proxy: Proxy;
 }
-type RouteKey = 'id';
-type RouteName = RouteKey | 'method' | 'path';
 type RawRoute =
     | Omit<mockit.PlainRoute, RouteKey>
     | Omit<mockit.CondRoute, RouteKey>

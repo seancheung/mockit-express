@@ -10,7 +10,7 @@ Http API mock router for express application
 ## Install
 
 ```bash
-npm i mockit-express express
+npm i mockit-express express body-parser
 # to enable yaml file format support
 npm i js-yaml
 # to enable faker support
@@ -19,6 +19,8 @@ npm i faker
 npm i express-request-proxy
 # to enable file watching and auto-reload support
 npm i chokidar
+# to enable nock support
+npm i -D nock
 ```
 
 ## Usage
@@ -311,10 +313,45 @@ module.exports = {
 };
 ```
 
+## Integrate with nock
+
+> Proxy routes and routes with params are not supported when using nock. 'ALL' method is also forbidden
+
+load a file
+
+```javascript
+const nockit = require("mockit-express/nock");
+const scope = nockit("http://domain.com", "/path/to/routes/file");
+// alias for nock.cleanAll()
+scope.stop();
+// alias for nock.restore()
+scope.pause();
+// alias for nock.activate()
+scope.activate();
+```
+
+Load existing data
+
+```javascript
+nockit("http://domain.com", db);
+nockit("http://domain.com", {
+  "GET /api/v1/test": {
+    code: 200,
+    delay: 1000,
+    body: "success"
+  }
+});
+```
+
+Add to exising nock scope
+
+```javascript
+nockit.mount(scope, route);
+```
+
 ## Standalone
 
 See [mockit](https://github.com/seancheung/mockit)
-
 
 ## License
 

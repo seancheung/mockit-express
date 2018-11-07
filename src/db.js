@@ -272,4 +272,15 @@ module.exports = class Database extends EventEmitter {
         this[SYMBOLS.stream] = stream;
     }
 
+    toJSON() {
+        return Array.from(this[SYMBOLS.db]).reduce((o, [, doc]) => {
+            const key = `${doc.method.toUpperCase()} ${doc.path}`;
+            const item = clone(doc);
+            delete item.method;
+            delete item.path;
+
+            return Object.assign(o, { [key]: item });
+        }, {});
+    }
+
 };

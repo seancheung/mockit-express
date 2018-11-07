@@ -1,0 +1,78 @@
+HEAD /api/v1/status:
+  code: 204
+  headers:
+    X-Version: "1.0.0"
+GET /api/v1/status:
+  code: 200
+GET /api/v1/bypass:
+  code: 200
+  bypass: true
+GET /api/v1/delay:
+  code: 204
+  delay: 100
+POST /api/v1/data:
+  code: 201
+  headers:
+    Content-Type: "application/json"
+  body: |-
+    {
+      "id": 123,
+      "key": "abc"
+    }
+GET /api/v1/cond:
+  code: 404
+  headers:
+    Content-Type: "application/json"
+  body: |-
+    {
+      "id": null,
+      "name": "unknown"
+    }
+  cond:
+    - case: query.id == '1'
+      code: 200
+      body: |-
+        {
+          "id": 1,
+          "name": "Adam"
+        }
+    - case: query.id == '2'
+      code: 200
+      body: |-
+        {
+          "id": 2,
+          "name": "Eve"
+        }
+POST /api/v1/interpo:
+  code: 201
+  headers:
+    Content-Type: "application/json"
+  body: |-
+    {
+      "page": {
+        "index": ${query.i},
+        "size": ${query.s || 10}
+      },
+      "platform": "${headers['x-platform']}",
+      "data": {
+        "name": "${body.name}",
+        "count": ${body.count + 1}
+      }
+    }
+GET /api/v1/faker:
+  code: 200
+  headers:
+    Content-Type: "application/json"
+  body: |-
+    {
+      "id": ${faker.random.number()},
+      "name": "${faker.internet.userName()}",
+      "fullname": "${$faker('zh_CN').name.firstName}${$faker('zh_CN').name.lastName()}",
+      "email": "${faker.internet.email}",
+      "location": {
+        "latitude": ${faker.address.latitude},
+        "longitude": ${faker.address.longitude}
+      },
+      "desc": "${faker.lorem.paragraph}",
+      "escape": "${'\{' + 'using curly braces inside interpo template' + '\}'}"
+    }

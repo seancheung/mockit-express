@@ -1,6 +1,6 @@
 {
   "name": "mockit-express",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Http API mock router for express application",
   "main": "src/index.js",
   "types": "index.d.ts",
@@ -30,13 +30,20 @@
     "body-parser": "^1.18.3",
     "chai": "^4.2.0",
     "chokidar": "^2.0.4",
-    "eslint": "^5.1.0",
+    "eslint": "^5.8.0",
     "express": "^4.16.4",
     "express-request-proxy": "^2.2.2",
     "faker": "^4.1.0",
     "js-yaml": "^3.12.0",
     "mocha": "^5.2.0",
     "mock-require": "^3.0.2",
+    "nock": "^10.0.2",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
     "supertest": "^3.3.0"
+  },
+  "peerDependencies": {
+    "express": ">=4.16.4",
+    "body-parser": ">=1.18.3"
   }
 }

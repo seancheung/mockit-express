@@ -64,7 +64,10 @@ module.exports = route => (req, res, next) => {
                         item.headers
                     );
                 }
-                if (item.body) {
+                if (item.delay != null) {
+                    $route.delay = delay;
+                }
+                if (item.body != null) {
                     $route.body = interpolate(item.body, req);
                 }
                 break;
